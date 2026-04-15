@@ -19,6 +19,7 @@ public partial class Form1 : Form
     private void ConfigureForm()
     {
         currentHoursInput.ValueChanged += (_, _) => RecalculateSummary();
+        currentHoursInput.TextChanged += (_, _) => RecalculateSummary();
         ConfigureAccrualRateInput();
         ptoCalendar.DateSelected += Calendar_DateSelected;
         clearSelectionButton.Click += (_, _) =>
@@ -86,7 +87,7 @@ public partial class Form1 : Form
         var today = DateTime.Today;
         var fiscalYearEnd = GetFiscalYearEnd(today);
         var accrualRate = GetSelectedAccrualRate();
-        var currentHours = currentHoursInput.Value;
+        var currentHours = GetCurrentHours();
         var futureAccruals = CountRemainingAccrualPeriods(today, fiscalYearEnd);
         var projectedHours = currentHours + (futureAccruals * accrualRate);
         var selectedHours = selectedPtoDates.Count * HoursPerPtoDay;
@@ -121,6 +122,13 @@ public partial class Form1 : Form
         return decimal.TryParse(accrualRateInput.Text, NumberStyles.Number, CultureInfo.InvariantCulture, out var rate)
             ? rate
             : 8.33m;
+    }
+
+    private decimal GetCurrentHours()
+    {
+        return decimal.TryParse(currentHoursInput.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out var hours)
+            ? hours
+            : currentHoursInput.Value;
     }
 
     private static DateTime GetFiscalYearEnd(DateTime today)
