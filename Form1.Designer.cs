@@ -37,7 +37,7 @@ partial class Form1
         currentHoursLabel = new Label();
         currentHoursInput = new NumericUpDown();
         accrualRateLabel = new Label();
-        accrualRateInput = new NumericUpDown();
+        accrualRateInput = new DomainUpDown();
         fiscalYearLabel = new Label();
         instructionLabel = new Label();
         ptoCalendar = new MonthCalendar();
@@ -60,7 +60,6 @@ partial class Form1
         inputPanel.SuspendLayout();
         summaryPanel.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)currentHoursInput).BeginInit();
-        ((System.ComponentModel.ISupportInitialize)accrualRateInput).BeginInit();
         SuspendLayout();
         // 
         // mainLayout
@@ -176,14 +175,14 @@ partial class Form1
         // 
         // accrualRateInput
         // 
-        accrualRateInput.DecimalPlaces = 2;
         accrualRateInput.Font = new Font("Segoe UI", 11F);
         accrualRateInput.Location = new Point(22, 233);
-        accrualRateInput.Maximum = new decimal(new int[] { 40, 0, 0, 0 });
         accrualRateInput.Name = "accrualRateInput";
+        accrualRateInput.ReadOnly = true;
         accrualRateInput.Size = new Size(320, 32);
         accrualRateInput.TabIndex = 5;
-        accrualRateInput.Value = new decimal(new int[] { 8, 0, 0, 0 });
+        accrualRateInput.Text = "8.33";
+        accrualRateInput.Wrap = true;
         // 
         // fiscalYearLabel
         // 
@@ -394,7 +393,6 @@ partial class Form1
         summaryPanel.ResumeLayout(false);
         summaryPanel.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)currentHoursInput).EndInit();
-        ((System.ComponentModel.ISupportInitialize)accrualRateInput).EndInit();
         ResumeLayout(false);
     }
 
@@ -408,7 +406,7 @@ partial class Form1
     private Label currentHoursLabel;
     private NumericUpDown currentHoursInput;
     private Label accrualRateLabel;
-    private NumericUpDown accrualRateInput;
+    private DomainUpDown accrualRateInput;
     private Label fiscalYearLabel;
     private Label instructionLabel;
     private MonthCalendar ptoCalendar;

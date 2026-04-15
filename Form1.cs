@@ -6,6 +6,7 @@ public partial class Form1 : Form
 {
     private const decimal HoursPerPtoDay = 8m;
     private const decimal CarryoverLimitHours = 200m;
+    private static readonly decimal[] AllowedAccrualRates = [5.67m, 6.33m, 6.67m, 7.00m, 7.67m, 8.33m, 9.00m];
     private readonly HashSet<DateTime> selectedPtoDates = [];
 
     public Form1()
@@ -18,7 +19,7 @@ public partial class Form1 : Form
     private void ConfigureForm()
     {
         currentHoursInput.ValueChanged += (_, _) => RecalculateSummary();
-        accrualRateInput.ValueChanged += (_, _) => RecalculateSummary();
+        ConfigureAccrualRateInput();
         ptoCalendar.DateSelected += Calendar_DateSelected;
         clearSelectionButton.Click += (_, _) =>
         {
@@ -32,6 +33,20 @@ public partial class Form1 : Form
         ptoCalendar.SetDate(DateTime.Today);
         ptoCalendar.MinDate = DateTime.Today;
         ptoCalendar.MaxDate = fiscalYearEnd;
+    }
+
+    private void ConfigureAccrualRateInput()
+    {
+        accrualRateInput.Items.Clear();
+        foreach (var rate in AllowedAccrualRates)
+        {
+            accrualRateInput.Items.Add(rate.ToString("0.00", CultureInfo.InvariantCulture));
+        }
+
+        accrualRateInput.SelectedItem = "8.33";
+        accrualRateInput.Text = "8.33";
+        accrualRateInput.SelectedItemChanged += (_, _) => RecalculateSummary();
+        accrualRateInput.TextChanged += (_, _) => RecalculateSummary();
     }
 
     private void Calendar_DateSelected(object? sender, DateRangeEventArgs e)
@@ -70,7 +85,7 @@ public partial class Form1 : Form
     {
         var today = DateTime.Today;
         var fiscalYearEnd = GetFiscalYearEnd(today);
-        var accrualRate = accrualRateInput.Value;
+        var accrualRate = GetSelectedAccrualRate();
         var currentHours = currentHoursInput.Value;
         var futureAccruals = CountRemainingAccrualPeriods(today, fiscalYearEnd);
         var projectedHours = currentHours + (futureAccruals * accrualRate);
@@ -99,6 +114,13 @@ public partial class Form1 : Form
             balanceStatusLabel.Text = "Balance is within the 200-hour carryover limit.";
             balanceStatusLabel.ForeColor = Color.FromArgb(27, 94, 32);
         }
+    }
+
+    private decimal GetSelectedAccrualRate()
+    {
+        return decimal.TryParse(accrualRateInput.Text, NumberStyles.Number, CultureInfo.InvariantCulture, out var rate)
+            ? rate
+            : 8.33m;
     }
 
     private static DateTime GetFiscalYearEnd(DateTime today)
